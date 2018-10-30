@@ -160,41 +160,41 @@ void removeProcess (int curr_pid) {
           prevProcess = currProcess;
           currProcess = currProcess->next;
         }
-        if(currContainer->headProcess == NULL)
-        {
-          if(prevContainer == NULL)
-          {
-            containerList = currContainer->next;
-          }
-          else
-          {
-          prevContainer->next = currContainer->next;
-          }
-
-          // delete the list of objects and locks for this container
-          currLock = currContainer->headLock;
-          while(currLock!=NULL)
-          {
-            nextLock = currLock->next;
-            kfree(currLock);
-            currLock = nextLock;
-          }
-          currLock = NULL;
-          nextLock = NULL;
-
-          currObject = currContainer->headObject;
-          while(currObject!= NULL)
-          {
-            nextObject = currObject->next;
-            kfree(currObject);
-            currObject = nextObject;
-          }
-          currObject = NULL;
-          nextObject = NULL;
-
-          kfree(currContainer);
-          currContainer = NULL;
-        }
+        // if(currContainer->headProcess == NULL)
+        // {
+        //   if(prevContainer == NULL)
+        //   {
+        //     containerList = currContainer->next;
+        //   }
+        //   else
+        //   {
+        //   prevContainer->next = currContainer->next;
+        //   }
+        //
+        //   // delete the list of objects and locks for this container
+        //   currLock = currContainer->headLock;
+        //   while(currLock!=NULL)
+        //   {
+        //     nextLock = currLock->next;
+        //     kfree(currLock);
+        //     currLock = nextLock;
+        //   }
+        //   currLock = NULL;
+        //   nextLock = NULL;
+        //
+        //   currObject = currContainer->headObject;
+        //   while(currObject!= NULL)
+        //   {
+        //     nextObject = currObject->next;
+        //     kfree(currObject);
+        //     currObject = nextObject;
+        //   }
+        //   currObject = NULL;
+        //   nextObject = NULL;
+        //
+        //   kfree(currContainer);
+        //   currContainer = NULL;
+        // }
         if(isProcessFound) break;
       prevContainer = currContainer;
       currContainer = currContainer->next;
