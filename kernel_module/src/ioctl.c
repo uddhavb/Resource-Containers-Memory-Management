@@ -81,6 +81,7 @@ struct container *containerList =  NULL;
 
 void deleteContainerList(void)
 {
+  printk("Deleting the containerList\n");
   struct container *currContainer = NULL;
   struct container *nextContainer = NULL;
   struct object *currObject = NULL;
@@ -99,6 +100,7 @@ void deleteContainerList(void)
       kfree(currObject);
       currObject = nextObject;
     }
+    printk("Deleted all objects\n");
     currObject = NULL;
     nextObject = NULL;
     // delete the list of objects and locks for this container
