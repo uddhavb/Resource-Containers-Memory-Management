@@ -100,7 +100,6 @@ void deleteContainerList(void)
       kfree(currObject);
       currObject = nextObject;
     }
-    printk("Deleted all objects\n");
     currObject = NULL;
     nextObject = NULL;
     // delete the list of objects and locks for this container
@@ -113,10 +112,10 @@ void deleteContainerList(void)
     }
     currLock = NULL;
     nextLock = NULL;
-
     nextContainer = currContainer->next;
     kfree(currContainer);
     currContainer = nextContainer;
+    printk("Deleted all objects, memory and locks for present container\n");
   }
 }
 
