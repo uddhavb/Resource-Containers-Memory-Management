@@ -44,6 +44,7 @@
 #include <linux/mutex.h>
 #include <linux/sched.h>
 
+extern deleteContainerList(void);
 extern struct miscdevice memory_container_dev;
 
 
@@ -65,5 +66,6 @@ int memory_container_init(void)
 
 void memory_container_exit(void)
 {
+    deleteContainerList();
     misc_deregister(&memory_container_dev);
 }
