@@ -388,7 +388,7 @@ int memory_container_mmap(struct file *filp, struct vm_area_struct *vma)
           printk("create new object\n");
           // // create a new object and assign page table entry
           // int sizeOfObject = (int)((vma->vm_end - vma->vm_start)*sizeof(char));
-          reservedSpace = (char*) kmalloc((vma->vm_end - vma->vm_start)*sizeof(char), GFP_KERNEL);
+          reservedSpace = (char*) kcalloc(1,(vma->vm_end - vma->vm_start)*sizeof(char), GFP_KERNEL);
           new_object = (struct object*) kcalloc(1, sizeof(struct object), GFP_KERNEL);
           new_object->startAddress = reservedSpace;
           new_object->next = NULL;
