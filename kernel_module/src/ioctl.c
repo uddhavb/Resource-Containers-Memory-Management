@@ -81,13 +81,13 @@ struct container *containerList =  NULL;
 
 void deleteContainerList(void)
 {
-  printk("Deleting the containerList\n");
   struct container *currContainer = NULL;
   struct container *nextContainer = NULL;
   struct object *currObject = NULL;
   struct object *nextObject = NULL;
   struct lock *currLock = NULL;
   struct lock *nextLock = NULL;
+  printk("Deleting the containerList\n");
   currContainer = containerList;
   while(currContainer!=NULL)
   {
@@ -162,10 +162,6 @@ void removeProcess (int curr_pid) {
   struct process *currProcess = NULL;
   struct process *prevProcess = NULL;
   struct process *processHead = NULL;
-  struct lock *currLock = NULL;
-  struct object * currObject = NULL;
-  struct lock *nextLock = NULL;
-  struct object * nextObject = NULL;
   printk("\t\tstart removeTopProcess\n");
   currContainer = containerList;
   while(currContainer!=NULL)
@@ -416,14 +412,21 @@ int memory_container_mmap(struct file *filp, struct vm_area_struct *vma)
 
 int memory_container_lock(struct memory_container_cmd __user *user_cmd)
 {
-    mutex_lock(&lock);
     int new_oid;
-    struct container *currContainer = NULL;
-    struct process *currProcess = NULL;
-    struct lock *currLock = NULL;
-    struct lock *prevLock = NULL;
-    bool foundProcess = false;
-    struct memory_container_cmd* userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
+    struct container *currContainer;
+    struct process *currProcess;
+    struct lock *currLock;
+    struct lock *prevLock;
+    struct lock *new_lock;
+    bool foundProcess;
+    struct memory_container_cmd* userInfo;
+    mutex_lock(&lock);
+    currContainer = NULL;
+    currProcess = NULL;
+    currLock = NULL;
+    prevLock = NULL;
+    foundProcess = false;
+    userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
     printk("Locking object------------------------------------%d\n", (int)current->pid);
     // mutex_lock(&lock);
     copy_from_user(userInfo,user_cmd,sizeof(struct memory_container_cmd));
@@ -476,7 +479,7 @@ int memory_container_lock(struct memory_container_cmd __user *user_cmd)
     }
     // we did not find the lock in the LIST
     //  create new lock object
-    struct lock *new_lock = (struct lock*) kcalloc(1, sizeof(struct lock), GFP_KERNEL);
+    new_lock = (struct lock*) kcalloc(1, sizeof(struct lock), GFP_KERNEL);
     new_lock->oid = new_oid;
     mutex_init(&(new_lock->lockObject));
     mutex_unlock(&lock);
@@ -499,14 +502,20 @@ int memory_container_lock(struct memory_container_cmd __user *user_cmd)
 
 int memory_container_unlock(struct memory_container_cmd __user *user_cmd)
 {
-    mutex_lock(&lock);
     int new_oid;
-    struct container *currContainer = NULL;
-    struct process *currProcess = NULL;
-    struct lock *currLock = NULL;
-    struct lock *prevLock = NULL;
-    bool foundProcess = false;
-    struct memory_container_cmd* userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
+    struct container *currContainer;
+    struct process *currProcess;
+    struct lock *currLock;
+    struct lock *prevLock;
+    bool foundProcess;
+    struct memory_container_cmd* userInfo;
+    mutex_lock(&lock);
+    currContainer = NULL;
+    currProcess = NULL;
+    currLock = NULL;
+    prevLock = NULL;
+    foundProcess = false;
+    userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
     printk("UNlocking the object...................................%d\n", (int)current->pid);
     copy_from_user(userInfo,user_cmd,sizeof(struct memory_container_cmd));
     new_oid = (int)userInfo->oid;
@@ -601,12 +610,18 @@ int memory_container_create(struct memory_container_cmd __user *user_cmd)
 
 int memory_container_free(struct memory_container_cmd __user *user_cmd)
 {
-    mutex_lock(&lock);
     int curr_oid;
-    struct container *currContainer = NULL;
-    struct process *currProcess = NULL;
-    bool foundProcess = false;
-    struct memory_container_cmd* userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
+    struct container *currContainer;
+    struct process *currProcess;
+    bool foundProcess;
+    struct memory_container_cmd* userInfo;
+    struct object *currObject;
+    struct object *prevObject;
+    mutex_lock(&lock);
+    currContainer = NULL;
+    currProcess = NULL;
+    foundProcess = false;
+    userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
     printk("Free Object-----------------------------------%d\n", (int)current->pid);
     // mutex_lock(&lock);
     copy_from_user(userInfo,user_cmd,sizeof(struct memory_container_cmd));
@@ -644,8 +659,8 @@ int memory_container_free(struct memory_container_cmd __user *user_cmd)
     }
 
     // Now search if the Object exists in the locks list of this container
-    struct object *currObject = currContainer->headObject;
-    struct object *prevObject = NULL;
+    currObject = currContainer->headObject;
+    prevObject = NULL;
     while(currObject!=NULL)
     {
       if(currObject->oid == curr_oid)
