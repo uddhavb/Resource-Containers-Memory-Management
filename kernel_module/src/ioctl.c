@@ -84,38 +84,38 @@ void deleteContainerList(void)
   struct container *currContainer = NULL;
   struct container *nextContainer = NULL;
   struct object *currObject = NULL;
-  struct object *nextObject = NULL;
+  struct object *tempObject = NULL;
   struct lock *currLock = NULL;
-  struct lock *nextLock = NULL;
-  printk("Deleting the containerList\n");
+  struct lock *tempLock = NULL;
+  // printk("Deleting the containerList\n");
   currContainer = containerList;
   while(currContainer!=NULL)
   {
     currObject = currContainer->headObject;
     while(currObject!= NULL)
     {
-      nextObject = currObject->next;
-      kfree(currObject->startAddress);
-      currObject->startAddress = NULL;
-      kfree(currObject);
-      currObject = nextObject;
+      tempObject = currObject;
+      currObject = currObject->next;
+      kfree(tempObject->startAddress);
+      tempObject->startAddress = NULL;
+      kfree(tempObject);
+      tempObject = NULL;
     }
     currObject = NULL;
-    nextObject = NULL;
     // delete the list of objects and locks for this container
     currLock = currContainer->headLock;
     while(currLock!=NULL)
     {
-      nextLock = currLock->next;
-      kfree(currLock);
-      currLock = nextLock;
+      tempLock = currLock;
+      currLock = currLock->next;
+      kfree(tempLock);
+      tempLock = NULL;
     }
     currLock = NULL;
-    nextLock = NULL;
     nextContainer = currContainer->next;
     kfree(currContainer);
     currContainer = nextContainer;
-    printk("Deleted all objects, memory and locks for present container\n");
+    // printk("Deleted all objects, memory and locks for present container\n");
   }
 }
 
@@ -132,14 +132,14 @@ void addProcess (int curr_cid, int new_pid) {
       }
       currContainer = currContainer->next;
     }
-    printk("\t\tstart add process\n");
+    // // printk("\t\tstart add process\n");
     newNode = (struct process*) kcalloc(1, sizeof(struct process), GFP_KERNEL);
     newNode->current_process = current;
     newNode->pid = new_pid;
     newNode->next = NULL;
     if(currContainer->headProcess == NULL)
       {
-          printk("first is null\n");
+          // // printk("first is null\n");
           currContainer->headProcess=newNode;
           return;
       }
@@ -151,7 +151,7 @@ void addProcess (int curr_cid, int new_pid) {
      }
      curr->next=newNode;
    }
-   printk("\t\tend addprocess\n");
+   // // printk("\t\tend addprocess\n");
 }
 
 // remove process from given container
@@ -162,16 +162,16 @@ void removeProcess (int curr_pid) {
   struct process *currProcess = NULL;
   struct process *prevProcess = NULL;
   struct process *processHead = NULL;
-  printk("\t\tstart removeTopProcess\n");
+  // // printk("\t\tstart removeTopProcess\n");
   currContainer = containerList;
   while(currContainer!=NULL)
   {
-    printk("in while loop\n");
-    printk("in if curr->cid == curr_cid\n");
+    // // printk("in while loop\n");
+    // // printk("in if curr->cid == curr_cid\n");
     currProcess = currContainer->headProcess;
     prevProcess = NULL;
     processHead = currContainer->headProcess;
-    printk("variable->'first' assigned \n");
+    // // printk("variable->'first' assigned \n");
         while(currProcess != NULL)
         {
           if(currProcess->pid == curr_pid)
@@ -199,8 +199,8 @@ void removeProcess (int curr_pid) {
       prevContainer = currContainer;
       currContainer = currContainer->next;
     }
-    printk("Container with CID: not found\n");
-    printk("\t\tend removeProcess\n");
+    // // printk("Container with CID: not found\n");
+    // // printk("\t\tend removeProcess\n");
     return;
 }
 
@@ -209,7 +209,7 @@ void addContainer (int new_cid, int new_pid) {
    struct container *curr=NULL;
    // struct container *new_node = NULL;
    struct container* new_node = (struct container*) kcalloc(1, sizeof(struct container), GFP_KERNEL);
-   printk("\t\tstart addContainer\n");
+   // // printk("\t\tstart addContainer\n");
    new_node->cid  = new_cid;
    new_node->headProcess = NULL;
    new_node->next = NULL;
@@ -222,7 +222,7 @@ void addContainer (int new_cid, int new_pid) {
    new_node->headProcess->next = NULL;
    if(containerList == NULL)
      {
-         printk("head is null\n");
+         // // printk("head is null\n");
          containerList=new_node;
          return;
      }
@@ -234,7 +234,7 @@ void addContainer (int new_cid, int new_pid) {
     }
     curr->next=new_node;
   }
-  printk("\t\tend addContainer\n");
+  // // printk("\t\tend addContainer\n");
 }
 
 
@@ -243,11 +243,11 @@ void addToContainer(int new_cid, int new_pid)
 {
 
   struct container *curr=containerList;
-  printk("\t\tstart addTOContainer\n");
-  printk("Add to container:\tCID: %d\tpid: %d\n",new_cid,new_pid);
+  // // printk("\t\tstart addTOContainer\n");
+  // // printk("Add to container:\tCID: %d\tpid: %d\n",new_cid,new_pid);
   if(containerList == NULL)
     {
-        printk("head is null in addTOcontainer\n");
+        // // printk("head is null in addTOcontainer\n");
         addContainer(new_cid, new_pid);
         return;
     }
@@ -261,7 +261,7 @@ void addToContainer(int new_cid, int new_pid)
     curr=curr->next;
   }
   addContainer(new_cid, new_pid);
-  printk("\t\tend addTOContainer\n");
+  // // printk("\t\tend addTOContainer\n");
   return;
 }
 
@@ -269,10 +269,10 @@ void addToContainer(int new_cid, int new_pid)
 // print the map
 void printMap(void)
 {
-  printk("\n-----------------------------------------------------------------------------------------------------------------\n");
+  // // printk("\n-----------------------------------------------------------------------------------------------------------------\n");
   if(containerList == NULL)
   {
-    printk("\nNo containers\n");
+    // // printk("\nNo containers\n");
     // mutex_unlock(&lock);
     return;
   }
@@ -283,33 +283,33 @@ void printMap(void)
     struct container *currContainer = containerList;
     while(currContainer != NULL)
     {
-      printk("\nCID:\t%d\t",currContainer->cid);
+      // // printk("\nCID:\t%d\t",currContainer->cid);
       currProcess = currContainer->headProcess;
       while(currProcess != NULL)
       {
-        printk("pid:\t%d\t",currProcess->pid);
+        // // printk("pid:\t%d\t",currProcess->pid);
         currProcess = currProcess->next;
       }
-      printk("\n");
-      currObject = currContainer->headObject;
+      // printk("\n");
+      // currObject = currContainer->headObject;
       while(currObject != NULL)
       {
-        printk("oid:\t%d\t", currObject->oid);
+        // // printk("oid:\t%d\t", currObject->oid);
         currObject = currObject->next;
       }
-      printk("\n");
+      // printk("\n");
       currContainer = currContainer->next;
     }
   }
-  printk("\n----------------------------------------------------------------------------------------------------------------\n");
+  // printk("\n----------------------------------------------------------------------------------------------------------------\n");
 }
 
 int findContainerForProcess(int curr_pid)
 {
   struct container *curr_container=NULL;
-  printk("\t\tstart findContainerForprocess\n");
+  // printk("\t\tstart findContainerForprocess\n");
   curr_container = containerList;
-  printk("find container for process:\tpid: %d\n",curr_pid);
+  // printk("find container for process:\tpid: %d\n",curr_pid);
   while(curr_container != NULL)
   {
     struct process *currProcess = curr_container->headProcess;
@@ -323,7 +323,7 @@ int findContainerForProcess(int curr_pid)
     }
     curr_container = curr_container->next;
   }
-  printk("\t\tend findContainerForprocess\n");
+  // printk("\t\tend findContainerForprocess\n");
   return -1;
 }
 
@@ -338,38 +338,37 @@ int memory_container_mmap(struct file *filp, struct vm_area_struct *vma)
     struct object *prevObject = NULL;
     struct object *new_object = NULL;
     int curr_offset;
-    unsigned long sizeOfObject;
     int curr_cid;
-    struct vm_area_struct* memoryInfo = (struct vm_area_struct*) kcalloc(1, sizeof(struct vm_area_struct), GFP_KERNEL);
+    struct vm_area_struct* memoryInfo;
     mutex_lock(&lock);
+    memoryInfo = (struct vm_area_struct*) kcalloc(1, sizeof(struct vm_area_struct), GFP_KERNEL);
     copy_from_user(memoryInfo, vma, sizeof(struct vm_area_struct));
-    curr_offset = (int) memoryInfo->vm_pgoff;
-    sizeOfObject = memoryInfo->vm_end - memoryInfo->vm_start;
+    curr_offset = memoryInfo->vm_pgoff;
     kfree(memoryInfo);
     memoryInfo = NULL;
 
-    printk("Finding pid's Container to create object.:\tPID: %d\n",(int)current->pid);
+    // printk("Finding pid's Container to create object.:\tPID: %d\n",(int)current->pid);
     curr_cid = findContainerForProcess(current->pid);
     if(curr_cid == -1)
     {
-      printk("Container for process requesting object creation not found\n");
+      // printk("Container for process requesting object creation not found\n");
       mutex_unlock(&lock);
       return 0;
     }
 
 
-    printk("Find the Object or insert new one\n");
+    // printk("Find the Object or insert new one\n");
     curr = containerList;
-    printk("Add to container:\tCID: %d\n",curr_cid);
+    // printk("Add to container:\tCID: %d\n",curr_cid);
     while(curr!=NULL)
     {
-      // printk("Inside while curr\n");
+      // // printk("Inside while curr\n");
       if(curr->cid == curr_cid)
       {
         currObject = curr->headObject;
         while(currObject!=NULL)
         {
-          // printk("Inside while currObject\n");
+          // // printk("Inside while currObject\n");
           if(currObject->oid == vma->vm_pgoff)
           {
             // the object already exists
@@ -381,17 +380,12 @@ int memory_container_mmap(struct file *filp, struct vm_area_struct *vma)
         }
         if(currObject == NULL)
         {
-          printk("create new object\n");
-          // // create a new object and assign page table entry
-          // int sizeOfObject = (int)((vma->vm_end - vma->vm_start)*sizeof(char));
-          reservedSpace = (char*) kcalloc(1,(vma->vm_end - vma->vm_start)*sizeof(char), GFP_KERNEL);
+          reservedSpace = (char*) kcalloc(1,(vma->vm_end - vma->vm_start), GFP_KERNEL);
           new_object = (struct object*) kcalloc(1, sizeof(struct object), GFP_KERNEL);
           new_object->startAddress = reservedSpace;
           new_object->next = NULL;
-          new_object->oid = (int)vma->vm_pgoff;
+          new_object->oid = vma->vm_pgoff;
           new_object->pageFrameNumber = virt_to_phys((void*)reservedSpace)>>PAGE_SHIFT;
-          // for(i = 0; i < sizeOfObject; i += PAGE_SIZE) {
-          //   SetPageReserved(virt_to_page(((unsigned long)mem) + i));
           remap_pfn_range(vma, vma->vm_start, new_object->pageFrameNumber, vma->vm_end-vma->vm_start, vma->vm_page_prot);
           if(prevObject == NULL)
           {
@@ -427,7 +421,7 @@ int memory_container_lock(struct memory_container_cmd __user *user_cmd)
     prevLock = NULL;
     foundProcess = false;
     userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
-    printk("Locking object------------------------------------%d\n", (int)current->pid);
+    // printk("Locking object------------------------------------%d\n", (int)current->pid);
     // mutex_lock(&lock);
     copy_from_user(userInfo,user_cmd,sizeof(struct memory_container_cmd));
     new_oid = (int)userInfo->oid;
@@ -435,7 +429,7 @@ int memory_container_lock(struct memory_container_cmd __user *user_cmd)
     userInfo = NULL;
 
 
-    printk("searching container for oid: %d and pid: %d", new_oid, current->pid);
+    // printk("searching container for oid: %d and pid: %d", new_oid, current->pid);
     currContainer = containerList;
     while(currContainer != NULL)
     {
@@ -458,8 +452,8 @@ int memory_container_lock(struct memory_container_cmd __user *user_cmd)
     // now you have the target container
     if(currContainer == NULL)
     {
-      printk("NO SUCH PROCESS IN CONTAINER LIST\n");
-      // mutex_unlock(&lock);
+      // printk("NO SUCH PROCESS IN CONTAINER LIST\n");
+      mutex_unlock(&lock);
       return 0;
     }
 
@@ -469,7 +463,7 @@ int memory_container_lock(struct memory_container_cmd __user *user_cmd)
     {
       if(currLock->oid == new_oid)
       {
-        printk("The oid's lock already exists! Lock it\n");
+        // printk("The oid's lock already exists! Lock it\n");
         mutex_unlock(&lock);
         mutex_lock(&(currLock->lockObject));
         return 0;
@@ -482,9 +476,6 @@ int memory_container_lock(struct memory_container_cmd __user *user_cmd)
     new_lock = (struct lock*) kcalloc(1, sizeof(struct lock), GFP_KERNEL);
     new_lock->oid = new_oid;
     mutex_init(&(new_lock->lockObject));
-    mutex_unlock(&lock);
-    mutex_lock(&(new_lock->lockObject));
-    mutex_lock(&lock);
     new_lock->next = NULL;
 
     if(prevLock ==NULL)
@@ -496,6 +487,7 @@ int memory_container_lock(struct memory_container_cmd __user *user_cmd)
       prevLock->next = new_lock;
     }
     mutex_unlock(&lock);
+    mutex_lock(&(new_lock->lockObject));
     return 0;
 }
 
@@ -516,13 +508,13 @@ int memory_container_unlock(struct memory_container_cmd __user *user_cmd)
     prevLock = NULL;
     foundProcess = false;
     userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
-    printk("UNlocking the object...................................%d\n", (int)current->pid);
+    // printk("UNlocking the object...................................%d\n", (int)current->pid);
     copy_from_user(userInfo,user_cmd,sizeof(struct memory_container_cmd));
     new_oid = (int)userInfo->oid;
     kfree(userInfo);
     userInfo = NULL;
 
-    printk("searching container for oid: %d and pid: %d", new_oid, current->pid);
+    // printk("searching container for oid: %d and pid: %d", new_oid, current->pid);
     currContainer = containerList;
     while(currContainer != NULL)
     {
@@ -546,7 +538,7 @@ int memory_container_unlock(struct memory_container_cmd __user *user_cmd)
     // now you have the target container
     if(currContainer == NULL)
     {
-      printk("NO SUCH PROCESS IN CONTAINER LIST\n");
+      // printk("NO SUCH PROCESS IN CONTAINER LIST\n");
       mutex_unlock(&lock);
       return 0;
     }
@@ -556,7 +548,7 @@ int memory_container_unlock(struct memory_container_cmd __user *user_cmd)
     {
       if(currLock->oid == new_oid)
       {
-        printk("The oid already exists! UNLock it\n");
+        // printk("The oid already exists! UNLock it\n");
         mutex_unlock(&(currLock->lockObject));
         mutex_unlock(&lock);
         return 0;
@@ -564,7 +556,7 @@ int memory_container_unlock(struct memory_container_cmd __user *user_cmd)
       prevLock = currLock;
       currLock = currLock->next;
     }
-    printk("Lock not found!!!!!!!!");
+    // printk("Lock not found!!!!!!!!");
     mutex_unlock(&lock);
     return 0;
 }
@@ -574,12 +566,12 @@ int memory_container_delete(struct memory_container_cmd __user *user_cmd)
 {
 
   mutex_lock(&lock);
-  printk("\t\tprocessor_container_delete ****************************\n");
-  printk("deleting PID: %d\n",(int)current->pid);
+  // printk("\t\tprocessor_container_delete ****************************\n");
+  // printk("deleting PID: %d\n",(int)current->pid);
   removeProcess((int)current->pid);
-  printMap();
+  // printMap();
   mutex_unlock(&lock);
-  printk("\t\tprocessor_container_delete ****************************\n");
+  // printk("\t\tprocessor_container_delete ****************************\n");
  // printMap();
   return 0;
 
@@ -590,19 +582,20 @@ int memory_container_create(struct memory_container_cmd __user *user_cmd)
 {
 
   int new_cid;
-  struct memory_container_cmd* userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
+  struct memory_container_cmd* userInfo;
   mutex_lock(&lock);
-  printk("\t\tprocessor_container_create ****************************\n");
+  userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
+  // printk("\t\tprocessor_container_create ****************************\n");
   copy_from_user(userInfo,user_cmd,sizeof(struct memory_container_cmd));
   new_cid = (int)userInfo->cid;
   kfree(userInfo);
   userInfo = NULL;
-  printk("creating CID: %d\tPID: %d\n",new_cid,(int)current->pid);
+  // printk("creating CID: %d\tPID: %d\n",new_cid,(int)current->pid);
   addToContainer(new_cid, (int)current->pid);
-  printMap();
+  // printMap();
   mutex_unlock(&lock);
   // above function unlocks mutex
-  printk("\t\tprocessor_container_create ****************************\n");
+  // printk("\t\tprocessor_container_create ****************************\n");
   return 0;
 
 }
@@ -622,7 +615,7 @@ int memory_container_free(struct memory_container_cmd __user *user_cmd)
     currProcess = NULL;
     foundProcess = false;
     userInfo = (struct memory_container_cmd*) kcalloc(1, sizeof(struct memory_container_cmd), GFP_KERNEL);
-    printk("Free Object-----------------------------------%d\n", (int)current->pid);
+    // printk("Free Object-----------------------------------%d\n", (int)current->pid);
     // mutex_lock(&lock);
     copy_from_user(userInfo,user_cmd,sizeof(struct memory_container_cmd));
     curr_oid = (int)userInfo->oid;
@@ -630,7 +623,7 @@ int memory_container_free(struct memory_container_cmd __user *user_cmd)
     userInfo = NULL;
 
 
-    printk("searching container for oid: %d and pid: %d", curr_oid, current->pid);
+    // printk("searching container for oid: %d and pid: %d", curr_oid, current->pid);
     currContainer = containerList;
     while(currContainer != NULL)
     {
@@ -653,8 +646,8 @@ int memory_container_free(struct memory_container_cmd __user *user_cmd)
     // now you have the target container
     if(currContainer == NULL)
     {
-      printk("NO SUCH PROCESS IN CONTAINER LIST\n");
-      // mutex_unlock(&lock);
+      // printk("NO SUCH PROCESS IN CONTAINER LIST\n");
+      mutex_unlock(&lock);
       return 0;
     }
 
@@ -665,7 +658,6 @@ int memory_container_free(struct memory_container_cmd __user *user_cmd)
     {
       if(currObject->oid == curr_oid)
       {
-        printk("The oid exists! Delete object\n");
         if(prevObject == NULL)
         {
           currContainer->headObject = currObject->next;
@@ -674,6 +666,7 @@ int memory_container_free(struct memory_container_cmd __user *user_cmd)
         {
           prevObject->next = currObject->next;
         }
+        printk("Free object\t cid: %d\t oid: %d\n", currContainer->cid, currObject->oid);
         kfree(currObject->startAddress);
         currObject->startAddress = NULL;
         kfree(currObject);
@@ -684,7 +677,7 @@ int memory_container_free(struct memory_container_cmd __user *user_cmd)
       prevObject = currObject;
       currObject = currObject->next;
     }
-    printk("Object to free, not found!!!!!!!!");
+    // printk("Object to free, not found!!!!!!!!");
     mutex_unlock(&lock);
     return 0;
 }
