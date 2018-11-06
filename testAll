@@ -1,23 +1,49 @@
 # example
-# growing on the number of processes 
+# growing on the number of processes
+echo "TEST CASES: growing on the number of processes"
+echo "TEST CASE : 1"
 ./test.sh 128 4096 1 1
+echo "TEST CASE : 2"
 ./test.sh 128 4096 2 1
+echo "TEST CASE : 3"
 ./test.sh 128 4096 4 1
 
 # growing on the number of objects
+echo "TEST CASES: growing on the number of objects"
+echo "TEST CASE : 1"
 ./test.sh 128 4096 1 1
+echo "TEST CASE : 2"
 ./test.sh 512 4096 1 1
+echo "TEST CASE : 3"
 ./test.sh 1024 4096 1 1
+echo "TEST CASE : 4"
 ./test.sh 4096 4096 1 1
 
 # growing on the object size
+echo "TEST CASES: growing on the object size"
+echo "TEST CASE : 1"
 ./test.sh 128 4096 1 1
+echo "TEST CASE : 2"
 ./test.sh 128 8192 1 1
 
 # growing on the number of containers
+echo "TEST CASES: growing on the number of containers"
+echo "TEST CASE : 1"
 ./test.sh 128 4096 2 2
+echo "TEST CASE : 2"
 ./test.sh 128 4096 8 8
+echo "TEST CASE : 3"
 ./test.sh 128 4096 64 64
 
 # combination
+echo "TEST CASES: combiniation"
+echo "TEST CASE : 1"
 ./test.sh 256 8192 8 4
+
+echo "TEST CASES: FAILED ONES"
+echo "TEST CASE : 1"
+./test.sh 128 2048 256 64
+echo "TEST CASE : 2"
+./test.sh 16384 2048 8 4
+echo "TEST CASE : 3"
+./test.sh 256 16384 64 16
